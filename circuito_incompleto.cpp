@@ -145,7 +145,20 @@ bool Circuito::valid() const
 /// Funcoes de consulta
 /// ***********************
 
-//falta_fazer();
+int Circuito::getNumInputs() const
+{
+  return Nin;
+}
+
+int Circuito::getNumOutputs() const
+{
+  return this->id_out.size();
+}
+
+int Circuito::getNumPorts() const
+{
+  return this->ports.size();
+}
 
 /// ***********************
 /// Funcoes de modificacao
