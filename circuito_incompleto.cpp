@@ -45,7 +45,7 @@ ptr_Port allocPort(std::string& Tipo)
 ///
 
 /// ***********************
-/// Inicializacao e finalizacao
+/// Inicializacao e finalizacao @ian909041 dev
 /// ***********************
 
 Circuito::Circuito():
