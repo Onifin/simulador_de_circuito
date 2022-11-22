@@ -1,0 +1,26 @@
+# depslib dependency file v1.0
+1667919132 source:c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\bool3s.cpp
+	<iostream>
+	"bool3S.h"
+
+1667919132 c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\bool3s.h
+	<iostream>
+
+1668870792 source:c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\circuito-main.cpp
+	<iostream>
+	<string>
+	"circuito.h"
+
+1667917752 c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\circuito.h
+	<iostream>
+	<string>
+	<vector>
+	"bool3S.h"
+	"port.h"
+
+1667917093 c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\port.h
+	<iostream>
+	<string>
+	<vector>
+	"bool3S.h"
+
