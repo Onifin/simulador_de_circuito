@@ -229,5 +229,10 @@ std::ostream& operator<<(std::ostream& O, const Port& X)
 /// AS OUTRAS PORTS
 ///
 
-//falta_fazer();
+//NOT
+
+Port_NOT::Port_NOT(): Port(1)
+{
+
+}
 
