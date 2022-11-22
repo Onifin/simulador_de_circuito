@@ -49,13 +49,13 @@ ptr_Port allocPort(std::string& Tipo)
 /// ***********************
 
 Circuito::Circuito():
-    Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
+    Nin(), id_out(), out_circ(), ports()
 {
 
 }
 
 Circuito::Circuito(const Circuito& C):
-    Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
+    Nin(), id_out(), out_circ(), ports()
 {
     Nin = C.getNumInputs();
     id_out = C.id_out;
@@ -63,6 +63,12 @@ Circuito::Circuito(const Circuito& C):
     ports = C.ports;
 }
 
+Circuito::~Circuito(){
+    Nin = 0;
+    id_out.clear();
+    //out_circ().clear();
+    //ports().clear();
+}
 /// ***********************
 /// Funcoes de testagem
 /// ***********************
@@ -139,22 +145,22 @@ bool Circuito::valid() const
 /// Funcoes de consulta
 /// ***********************
 
-falta_fazer();
+//falta_fazer();
 
 /// ***********************
 /// Funcoes de modificacao
 /// ***********************
 
-falta_fazer();
+//falta_fazer();
 
 /// ***********************
 /// E/S de dados
 /// ***********************
 
-falta_fazer();
+//falta_fazer();
 
 /// ***********************
 /// SIMULACAO (funcao principal do circuito)
 /// ***********************
 
-falta_fazer();
+//falta_fazer();
