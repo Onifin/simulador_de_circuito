@@ -160,6 +160,43 @@ int Circuito::getNumPorts() const
   return this->ports.size();
 }
 
+  // Retorna a origem (a id) do sinal de saida cuja id eh IdOutput
+  // Depois de testar o parametro (validIdOutput), retorna id_out[IdOutput-1]
+  // ou 0 se parametro invalido
+int Circuito::getIdOutput(int IdOutput) const
+{
+  if (validIdOutput(IdOutput -1)) return id_out[IdOutput -1];
+  return false;
+}
+
+bool3S Circuito::getOutput(int IdOutput) const
+{
+  if (validIdOutput(IdOutput-1)) return out_circ[IdOutput-1];
+  return bool3S::UNDEF;
+}
+
+std::string Circuito::getNamePort(int IdPort) const
+{
+  if (definedPort(IdPort)) return ports[IdPort-1]->getName();
+  return "??";
+}
+
+int Circuito::getNumInputsPort(int IdPort) const
+{
+  if (definedPort(IdPort)) return ports[IdPort-1]->getNumInputs();
+  return false;
+}
+
+  // Retorna a origem (a id) da I-esima entrada da porta cuja id eh IdPort
+  // Depois de testar se a porta existe (definedPort) e o indice da entrada I,
+  // retorna ports[IdPort-1]->getId_in(I)
+  // ou 0 se parametro invalido
+int Circuito::getId_inPort(int IdPort, int I) const
+{
+  if (definedPort(IdPort) && validIdInput(I)) return ports[IdPort-1]->getId_in(I);
+  return false;
+}
+
 /// ***********************
 /// Funcoes de modificacao
 /// ***********************
