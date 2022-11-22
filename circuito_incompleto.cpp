@@ -46,10 +46,13 @@ ptr_Port allocPort(std::string& Tipo)
 
 /// ***********************
 /// Inicializacao e finalizacao
-
 /// ***********************
 
-falta_fazer();
+Circuito::Circuito():
+    Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
+{
+
+}
 
 /// ***********************
 /// Funcoes de testagem
