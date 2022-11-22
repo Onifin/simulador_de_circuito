@@ -54,6 +54,15 @@ Circuito::Circuito():
 
 }
 
+Circuito::Circuito(const Circuito& C):
+    Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
+{
+    Nin = C.getNumInputs();
+    id_out = C.id_out;
+    out_circ = C.out_circ;
+    ports = C.ports;
+}
+
 /// ***********************
 /// Funcoes de testagem
 /// ***********************
