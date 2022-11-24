@@ -261,7 +261,7 @@ void Port_NOT::digitar()
 
 void Port_NOT::simular(const std::vector<bool3S>& in_port)
 {
-
+    out_port = ~in_port[0];
 }
 
 //AND
