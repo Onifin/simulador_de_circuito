@@ -231,8 +231,200 @@ std::ostream& operator<<(std::ostream& O, const Port& X)
 
 //NOT
 
-Port_NOT::Port_NOT(): Port(1)
+Port_NOT::Port_NOT():
+    Port(1)
 {
 
 }
 
+
+ptr_Port Port_NOT::clone() const
+{
+  return new Port_NOT(*this);
+}
+
+//Não entendo, string está no .h mas não funciona aqui
+std::string Port_NOT::getName() const
+{
+  return "NT";
+}
+
+bool Port_NOT::validNumInputs(int NI) const
+{
+    return(true);
+}
+
+void Port_NOT::digitar()
+{
+
+}
+
+void Port_NOT::simular(const std::vector<bool3S>& in_port)
+{
+
+}
+
+//AND
+
+Port_AND::Port_AND():
+    Port()
+{
+
+}
+
+
+ptr_Port Port_AND::clone() const
+{
+    return new Port_AND(*this);
+}
+
+std::string Port_AND::getName() const
+{
+    return "AN";
+}
+
+  // Testa se a dimensao do vetor in_port eh igual ao numero de entradas da porta;
+  // se não for, faz out_port <- UNDEF e retorna.
+  // Armazena o valor bool3S com o resultado da simulacao (saida da porta)
+  // no dado "out_port" da porta
+void Port_AND::simular(const std::vector<bool3S>& in_port)
+{
+
+}
+
+//NAND
+
+Port_NAND::Port_NAND():
+    Port()
+{
+
+}
+
+ptr_Port Port_NAND::clone() const
+{
+    return new Port_NAND(*this);
+}
+
+std::string Port_NAND::getName() const
+{
+    return "NA";
+}
+
+  // Testa se a dimensao do vetor in_port eh igual ao numero de entradas da porta;
+  // se nao for, faz out_port <- UNDEF e retorna.
+  // Armazena o valor bool3S com o resultado da simulacao (saida da porta)
+  // no dado "out_port" da porta
+void Port_NAND::simular(const std::vector<bool3S>& in_port)
+{
+
+}
+
+//OR
+
+Port_OR::Port_OR():
+    Port()
+{
+
+}
+
+  // Retorna new Port_OR(*this)
+ptr_Port Port_OR::clone() const
+{
+    return new Port_OR(*this);
+}
+
+  // Retorna "OR"
+std::string Port_OR::getName() const
+{
+    return "OR";
+}
+
+  // Testa se a dimensao do vetor in_port eh igual ao numero de entradas da porta;
+  // se nao for, faz out_port <- UNDEF e retorna.
+  // Armazena o valor bool3S com o resultado da simulacao (saida da porta)
+  // no dado "out_port" da porta
+void Port_OR::simular(const std::vector<bool3S>& in_port)
+{
+
+}
+
+//NOR
+
+Port_NOR::Port_NOR():
+    Port()
+{
+
+}
+
+ptr_Port Port_NOR::clone() const
+{
+    return new Port_NOR(*this);
+}
+
+std::string Port_NOR::getName() const
+{
+    return "NO";
+}
+
+  // Testa se a dimensao do vetor in_port eh igual ao numero de entradas da porta;
+  // se nao for, faz out_port <- UNDEF e retorna.
+  // Armazena o valor bool3S com o resultado da simulacao (saida da porta)
+  // no dado "out_port" da porta
+void Port_NOR::simular(const std::vector<bool3S>& in_port)
+{
+
+}
+
+//XOR
+
+Port_XOR::Port_XOR():
+    Port()
+{
+
+}
+
+ptr_Port Port_XOR::clone() const
+{
+    return new Port_XOR(*this);
+}
+
+std::string Port_XOR::getName() const
+{
+    return "XO";
+}
+
+  // Testa se a dimensao do vetor in_port eh igual ao numero de entradas da porta;
+  // se nao for, faz out_port <- UNDEF e retorna.
+  // Armazena o valor bool3S com o resultado da simulacao (saida da porta)
+  // no dado "out_port" da porta
+void Port_XOR::simular(const std::vector<bool3S>& in_port)
+{
+
+}
+
+//XNOR
+
+Port_NXOR::Port_NXOR():
+    Port()
+{
+
+}
+
+ptr_Port Port_NXOR::clone() const
+{
+    return new Port_NXOR(*this);
+}
+
+std::string Port_NXOR::getName() const
+{
+    return "NX";
+}
+
+  // Testa se a dimensao do vetor in_port eh igual ao numero de entradas da porta;
+  // se nao for, faz out_port <- UNDEF e retorna.
+  // Armazena o valor bool3S com o resultado da simulacao (saida da porta)
+  // no dado "out_port" da porta
+void Port_NXOR::simular(const std::vector<bool3S>& in_port)
+{
+
+}

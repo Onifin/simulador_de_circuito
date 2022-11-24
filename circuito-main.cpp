@@ -8,9 +8,9 @@ void gerarTabela(Circuito& C);
 
 int main(void)
 {
-  Circuito C;
+  Port_NOT C;
 
-  //cout << C.getNumInputs();
+  cout << C.getName();
 
 
 }
