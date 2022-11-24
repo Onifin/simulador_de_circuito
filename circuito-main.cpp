@@ -12,6 +12,12 @@ int main(void)
 
   cout << C.getName();
 
+  C.setOutput(bool3S::FALSE);
 
+  vector<bool3S> in_circ(C.getNumInputs());
+
+  C.simular(in_circ);
+
+  cout << C.getOutput();
 }
 

@@ -316,7 +316,12 @@ std::string Port_NAND::getName() const
   // no dado "out_port" da porta
 void Port_NAND::simular(const std::vector<bool3S>& in_port)
 {
+    out_port = in_port[0];
 
+    for(int i=1; i<= getNumInputs()-1; i++)
+    {
+        out_port = out_port & in_port[i];
+    }
 }
 
 //OR
@@ -345,7 +350,12 @@ std::string Port_OR::getName() const
   // no dado "out_port" da porta
 void Port_OR::simular(const std::vector<bool3S>& in_port)
 {
+    out_port = in_port[0];
 
+    for(int i=1; i<= getNumInputs()-1; i++)
+    {
+        out_port = out_port | in_port[i];
+    }
 }
 
 //NOR
@@ -372,7 +382,14 @@ std::string Port_NOR::getName() const
   // no dado "out_port" da porta
 void Port_NOR::simular(const std::vector<bool3S>& in_port)
 {
+    out_port = in_port[0];
 
+    for(int i=1; i<= getNumInputs()-1; i++)
+    {
+        out_port = out_port | in_port[i];
+    }
+
+    out_port = ~out_port;
 }
 
 //XOR
@@ -399,7 +416,12 @@ std::string Port_XOR::getName() const
   // no dado "out_port" da porta
 void Port_XOR::simular(const std::vector<bool3S>& in_port)
 {
+    out_port = in_port[0];
 
+    for(int i=1; i<= getNumInputs()-1; i++)
+    {
+        out_port = out_port ^ in_port[i];
+    }
 }
 
 //XNOR
@@ -426,5 +448,12 @@ std::string Port_NXOR::getName() const
   // no dado "out_port" da porta
 void Port_NXOR::simular(const std::vector<bool3S>& in_port)
 {
+    out_port = in_port[0];
 
+    for(int i=1; i<= getNumInputs()-1; i++)
+    {
+        out_port = out_port ^ in_port[i];
+    }
+
+    out_port = ~out_port;
 }
