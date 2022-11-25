@@ -207,6 +207,63 @@ int Circuito::getId_inPort(int IdPort, int I) const
 /// E/S de dados
 /// ***********************
 
+bool Circuito::ler(const std::string& arq)
+{
+  try
+  {
+    std::ifstream ArqCircuito;
+    std::string titulo, stPorta;
+    int Nin, Nout, Np;
+    ArqCircuito >> titulo;
+    ArqCircuito >> Nin >> Nout >> Np;
+    ArqCircuito >> stPorta;
+
+    if (!ArqCircuito.good() || titulo != "CIRCUITO" || stPorta != "PORTA") throw 1;
+
+    for (int i = 0; i < Np; i++)
+    {
+        int index;
+        std::string prnts, portTipo;
+        ArqCircuito >> index >> prnts >> portTipo;
+
+        if (index != i + 1 || prnts != ")" || validType(portTipo))
+        {
+            ArqCircuito.close();
+            throw 2;
+        }
+
+        Port *P = allocPort(portTipo);
+        if ((*P).ler(ArqCircuito) && validPort((*P).getId_in(index)));
+    }
+
+    std::string saidas;
+    ArqCircuito >> saidas;
+
+    if (!ArqCircuito.good() || saidas != "SAIDAS") throw 3;
+
+    for (int i = 0; i < Nout; i++)
+    {
+        int index;
+        std::string prnts;
+        ArqCircuito >> index >> prnts;
+
+        if (index != i + 1 || prnts != ")" || validIdOrig(index))
+        {
+            ArqCircuito.close();
+            throw 4;
+        }
+    }
+  }
+  
+  catch (int erro)
+  {
+    return false;
+  }
+  return true;
+}
+
+
+
 //falta_fazer();
 
 /// ***********************
