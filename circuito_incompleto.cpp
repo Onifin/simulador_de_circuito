@@ -45,7 +45,7 @@ ptr_Port allocPort(std::string& Tipo)
 ///
 
 /// ***********************
-/// Inicializacao e finalizacao @ian909041 dev
+/// Inicializacao e finalizacao 
 /// ***********************
 
 Circuito::Circuito():
@@ -64,11 +64,44 @@ Circuito::Circuito(const Circuito& C):
 }
 
 Circuito::~Circuito(){
+    clear();
+}
+
+void Circuito::clear()
+{
     Nin = 0;
     id_out.clear();
-    //out_circ().clear();
-    //ports().clear();
+    out_circ.clear();
+    for (int i = 0; i < ports.size(); i++) delete ports[i];
+    ports.clear();
 }
+
+void Circuito::resize(int NI, int NO, int NP)
+{
+    if(NI < 0 || NO < 0 || NP < 0) return;
+
+    out_circ.clear();
+    id_out.clear();
+    ports.clear();
+
+    Nin = NI;
+
+    out_circ.resize(NO);
+    id_out.resize(NO);
+    ports.resize(NP);
+
+    for(int i = 0; i < NO; i++)
+    {
+        id_out[i] = 0;
+        out_circ[i] = bool3S::UNDEF;
+    }
+
+    for(int i = 0; i < NP; i++)
+    {
+        ports[i] = nullptr;
+    }
+}
+
 /// ***********************
 /// Funcoes de testagem
 /// ***********************
@@ -207,6 +240,68 @@ int Circuito::getId_inPort(int IdPort, int I) const
 /// E/S de dados
 /// ***********************
 
+void Circuito::digitar()
+{
+    int Nin;
+    int Nout;
+    int Nports;
+
+    std::string tipo;
+    do
+    {
+        std::cout << "  Numero de entradas da porta: ";
+        std::cin >> Nin;
+    }
+    while(Nin < 0);
+
+    do
+    {
+        std::cout << "  Numero de saidas da porta: ";
+        std::cin >> Nout;
+    }
+    while(Nout < 0);
+
+    do
+    {
+        std::cout << "  Numero de portas: ";
+        std::cin >> Nports;
+    }
+    while(Nports < 0);
+
+    resize(Nin, Nout, Nports);
+
+    for(int i = 0; i < Nports; i++)
+    {
+        do
+        {
+            std::cout << "  Digite o tipo da porta " << i+1 << std::endl;
+            std::cin >> tipo;
+
+            if(validType(tipo))
+            {
+                ports[i] = allocPort(tipo);
+            }
+            do
+            {
+                (*ports[i]).digitar();
+            }while(validPort(i+1));
+
+        }
+        while(!validType(tipo));
+
+    }
+
+    for(int i = 0; i < Nout; i++)
+    {
+        do
+        {
+            std::cout << "  Digite o id de saida da porta " << i+1 << std::endl;
+            std::cin >> id_out[i];
+        }while(validIdOrig(id_out[i]));
+    }
+
+}
+
 bool Circuito::ler(const std::string& arq)
 {
     std::ifstream ArqCircuito;
@@ -265,5 +360,23 @@ bool Circuito::ler(const std::string& arq)
 /// ***********************
 /// SIMULACAO (funcao principal do circuito)
 /// ***********************
+
+///     *#*#*#*#*#*#*#*#*#
+///     #SIMULAR CIRCUITO*
+///     *#*#*#*#*#*#*#*#*#
+
+bool Circuito::simular(const std::vector<bool3S>& in_circ)
+{
+    // VARIÁVEIS LOCAIS:
+    bool tudo_def, alguma_def;
+    std::vector<bool3S> in_port;
+
+    // SIMULAÇÃO DAS PORTAS
+
+    for(int i = 0; i <= getNumPorts()-1; i++)
+    {
+        (*ports[i]).setOutput(bool3S::UNDEF);
+    }
+}
 
 //falta_fazer();
