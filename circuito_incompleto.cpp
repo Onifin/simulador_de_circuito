@@ -49,18 +49,76 @@ ptr_Port allocPort(std::string& Tipo)
 /// ***********************
 
 Circuito::Circuito():
-    Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
+    // Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
+    Nin(), id_out(), out_circ(), ports()
 {
 
 }
 
 Circuito::Circuito(const Circuito& C):
-    Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
+    // Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
+    Nin(), id_out(), out_circ(), ports()
 {
     Nin = C.getNumInputs();
     id_out = C.id_out;
     out_circ = C.out_circ;
     ports = C.ports;
+}
+
+Circuito::Circuito(Circuito&& C)
+{
+
+}
+
+Circuito::~Circuito()
+{
+    clear();
+}
+
+void Circuito::clear()
+{
+    Nin = 0;
+    id_out.clear();
+    out_circ.clear();
+    for (int i = 0; i < ports.size(); i++) delete ports[i];
+    ports.clear();
+}
+
+void Circuito::operator=(const Circuito& C)
+{
+    // falta fazer
+}
+
+void Circuito::operator=(Circuito&& C)
+{
+    // falta fazer
+}
+
+
+void Circuito::resize(int NI, int NO, int NP)
+{
+    if(NI < 0 || NO < 0 || NP < 0) return;
+
+    out_circ.clear();
+    id_out.clear();
+    ports.clear();
+
+    Nin = NI;
+
+    out_circ.resize(NO);
+    id_out.resize(NO);
+    ports.resize(NP);
+
+    for(int i = 0; i < NO; i++)
+    {
+        id_out[i] = 0;
+        out_circ[i] = bool3S::UNDEF;
+    }
+
+    for(int i = 0; i < NP; i++)
+    {
+        ports[i] = nullptr;
+    }
 }
 
 /// ***********************
@@ -139,22 +197,301 @@ bool Circuito::valid() const
 /// Funcoes de consulta
 /// ***********************
 
-falta_fazer();
+
+int Circuito::getNumInputs() const
+{
+  return Nin;
+}
+
+int Circuito::getNumOutputs() const
+{
+  return this->id_out.size();
+}
+
+int Circuito::getNumPorts() const
+{
+  return this->ports.size();
+}
+
+  // Retorna a origem (a id) do sinal de saida cuja id eh IdOutput
+  // Depois de testar o parametro (validIdOutput), retorna id_out[IdOutput-1]
+  // ou 0 se parametro invalido
+int Circuito::getIdOutput(int IdOutput) const
+{
+  if (validIdOutput(IdOutput -1)) return id_out[IdOutput -1];
+  return false;
+}
+
+bool3S Circuito::getOutput(int IdOutput) const
+{
+  if (validIdOutput(IdOutput-1)) return out_circ[IdOutput-1];
+  return bool3S::UNDEF;
+}
+
+std::string Circuito::getNamePort(int IdPort) const
+{
+  if (definedPort(IdPort)) return ports[IdPort-1]->getName();
+  return "??";
+}
+
+int Circuito::getNumInputsPort(int IdPort) const
+{
+  if (definedPort(IdPort)) return ports[IdPort-1]->getNumInputs();
+  return false;
+}
+
+  // Retorna a origem (a id) da I-esima entrada da porta cuja id eh IdPort
+  // Depois de testar se a porta existe (definedPort) e o indice da entrada I,
+  // retorna ports[IdPort-1]->getId_in(I)
+  // ou 0 se parametro invalido
+int Circuito::getId_inPort(int IdPort, int I) const
+{
+  if (definedPort(IdPort) && validIdInput(I)) return ports[IdPort-1]->getId_in(I);
+  return false;
+}
 
 /// ***********************
 /// Funcoes de modificacao
 /// ***********************
 
-falta_fazer();
+  void Circuito::setIdOutput(int IdOut, int IdOrig)
+  {
+    // fazer falta
+    
+  }
+
+  void Circuito::setPort(int IdPort, std::string Tipo, int NIn)
+  {
+    if (validIdPort(IdPort) && validType(Tipo)) //falta fazer teste NIn
+    {
+        delete ports[IdPort -1];
+        ports[IdPort -1] = allocPort(Tipo);
+        (*ports[IdPort -1]).setNumInputs(NIn);
+    }
+  }
 
 /// ***********************
 /// E/S de dados
 /// ***********************
 
-falta_fazer();
+void Circuito::digitar()
+{
+    int Nin;
+    int Nout;
+    int Nports;
+
+    std::string tipo;
+    do
+    {
+        std::cout << "  Numero de entradas da porta: ";
+        std::cin >> Nin;
+    }
+    while(Nin < 0);
+
+    do
+    {
+        std::cout << "  Numero de saidas da porta: ";
+        std::cin >> Nout;
+    }
+    while(Nout < 0);
+
+    do
+    {
+        std::cout << "  Numero de portas: ";
+        std::cin >> Nports;
+    }
+    while(Nports < 0);
+
+    resize(Nin, Nout, Nports);
+
+    for(int i = 0; i < Nports; i++)
+    {
+        do
+        {
+            std::cout << "  Digite o tipo da porta " << i+1 << std::endl;
+            std::cin >> tipo;
+
+            if(validType(tipo))
+            {
+                ports[i] = allocPort(tipo);
+            }
+            do
+            {
+                (*ports[i]).digitar();
+            }while(validPort(i+1));
+
+        }
+        while(!validType(tipo));
+
+    }
+
+    for(int i = 0; i < Nout; i++)
+    {
+        do
+        {
+            std::cout << "  Digite o id de saida da porta " << i+1 << std::endl;
+            std::cin >> id_out[i];
+        }while(validIdOrig(id_out[i]));
+    }
+
+}
+
+bool Circuito::ler(const std::string& arq)
+{
+    std::ifstream ArqCircuito;
+    ArqCircuito.open(arq);
+    try
+    {
+        std::string titulo, stPorta;
+        int Nin, Nout, Np;
+        ArqCircuito >> titulo;
+        ArqCircuito >> Nin >> Nout >> Np;
+        ArqCircuito >> stPorta;
+
+        if (!ArqCircuito.good() || titulo != "CIRCUITO" || stPorta != "PORTA") throw 1;
+
+        for (int i = 0; i < Np; i++)
+        {
+            int index;
+            std::string prnts, portTipo;
+            ArqCircuito >> index >> prnts >> portTipo;
+
+            if (!ArqCircuito.good() || index != i + 1 || prnts != ")" || validType(portTipo)) throw 2;
+
+            Port *P = allocPort(portTipo);
+            if ((*P).ler(ArqCircuito) && validPort((*P).getId_in(index)));
+        }
+
+        std::string saidas;
+        ArqCircuito >> saidas;
+
+        if (!ArqCircuito.good() || saidas != "SAIDAS") throw 3;
+
+        for (int i = 0; i < Nout; i++)
+        {
+            int index;
+            std::string prnts;
+            ArqCircuito >> index >> prnts;
+
+            if (!ArqCircuito.good() || index != i + 1 || prnts != ")" || validIdOrig(index)) throw 4;
+        }
+    }
+
+    catch (int erro)
+    {
+        ArqCircuito.close();
+        return false;
+    }
+
+    ArqCircuito.close();
+    return true;
+}
+
+std::ostream& Circuito::imprimir(std::ostream& O=std::cout) const
+{
+    O << "CIRCUITO " << getNumInputs() << " " << getNumOutputs() << " " << getNumPorts() << std::endl;
+    O << "PORTAS" << std::endl;
+    for (int i = 0; i< ports.size(); i++)
+    {
+        O << (*ports[i]).getId_in(i) << ")" << (*ports[i]) << std::endl;
+    }
+    O << "SAIDAS" << std::endl;
+    for (int k; k < getNumOutputs(); k++)
+    {
+        O << getIdOutput(k) << ") " <<  (*ports[k]).getOutput();
+    }
+    return O;
+}
+
+ bool Circuito::salvar(const std::string& arq) const
+  {
+    if(!valid) return false;
+    std::ofstream Of(arq);
+    Of.open(arq);
+    if (!Of.good())
+    {
+        Of.close();
+        return false;
+    }
+    imprimir(Of);
+    Of.close();
+    return true;
+  }
 
 /// ***********************
 /// SIMULACAO (funcao principal do circuito)
 /// ***********************
 
-falta_fazer();
+bool Circuito::simular(const std::vector<bool3S>& in_circ)
+{
+    // VARIÁVEIS LOCAIS:
+    bool tudo_def, alguma_def;
+    int id;
+    std::vector<bool3S> in_port;
+
+    // SIMULAÇÃO DAS PORTAS
+
+    for(int i = 0; i <= getNumPorts()-1; i++)
+    {
+        (*ports[i]).setOutput(bool3S::UNDEF);
+    }
+
+    do
+    {
+        tudo_def = true;
+        alguma_def = false;
+
+        for(int i = 0; i <= getNumPorts()-1; i++)
+        {
+            if((*ports[i]).getOutput() == bool3S::UNDEF)
+            {
+                in_port.resize((*ports[i]).getNumInputs());
+                for(int j = 0; (*ports[i]).getNumInputs()-1; j++)
+                {
+
+                    id = (*ports[i]).getId_in(j);
+
+                    if(id>0)
+                    {
+                        in_port[j] = (*ports[id-1]).getOutput();
+                    }else
+                    {
+                        in_port[j] = in_circ[-id-1];
+                    }
+                }
+
+                (*ports[i]).simular(in_port);
+
+                if((*ports[id-1]).getOutput() == bool3S::UNDEF)
+                {
+                    tudo_def = false;
+                }else
+                {
+                    alguma_def = true;
+                }
+            }
+        }
+    }while(!tudo_def && alguma_def);
+
+    for(int j = 0; j <= getNumOutputs()-1; j++)
+    {
+        id = id_out[j];
+
+        if(id>0)
+        {
+             out_circ[j] = (*ports[id-1]).getOutput();
+        }else
+        {
+            out_circ[j] = in_circ[-id-1];
+        }
+    }
+}
+
+
+
+
+std::ostream& operator<<(std::ostream& O, const Circuito& C)
+{
+    C.imprimir(O);
+    return O;
+}
