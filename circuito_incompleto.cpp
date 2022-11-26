@@ -49,7 +49,6 @@ ptr_Port allocPort(std::string& Tipo)
 /// ***********************
 
 Circuito::Circuito():
-    // Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
     Nin(), id_out(), out_circ(), ports()
 {
 
@@ -148,7 +147,8 @@ bool Circuito::validIdPort(int IdPort) const
 // validIdOrig == validIdInput OR validIdPort
 bool Circuito::validIdOrig(int IdOrig) const
 {
-  return validIdInput(IdOrig) || validIdPort(IdOrig);
+    std::cout << IdOrig << std::endl;
+  return validIdInput(-IdOrig) || validIdPort(IdOrig);
 }
 
 // Retorna true se IdPort eh uma id de porta valida (validIdPort) e
@@ -205,12 +205,12 @@ int Circuito::getNumInputs() const
 
 int Circuito::getNumOutputs() const
 {
-  return this->id_out.size();
+  return id_out.size();
 }
 
 int Circuito::getNumPorts() const
 {
-  return this->ports.size();
+  return ports.size();
 }
 
   // Retorna a origem (a id) do sinal de saida cuja id eh IdOutput
@@ -230,13 +230,13 @@ bool3S Circuito::getOutput(int IdOutput) const
 
 std::string Circuito::getNamePort(int IdPort) const
 {
-  if (definedPort(IdPort)) return ports[IdPort-1]->getName();
+  if (definedPort(IdPort)) return (*ports[IdPort-1]).getName();
   return "??";
 }
 
 int Circuito::getNumInputsPort(int IdPort) const
 {
-  if (definedPort(IdPort)) return ports[IdPort-1]->getNumInputs();
+  if (definedPort(IdPort)) return (*ports[IdPort-1]).getNumInputs();
   return false;
 }
 
@@ -343,20 +343,22 @@ bool Circuito::ler(const std::string& arq)
     try
     {
         std::string titulo, stPorta;
-        int Nin, Nout, Np;
-        ArqCircuito >> titulo;
-        ArqCircuito >> Nin >> Nout >> Np;
-        ArqCircuito >> stPorta;
+        int N_In, N_Out, N_P;
+        ArqCircuito >> titulo >> N_In >> N_Out >> N_P >> stPorta;
+        Circuito Prov;
+        if(valid)
+        Prov.resize(N_In, N_Out, N_P);
 
-        if (!ArqCircuito.good() || titulo != "CIRCUITO" || stPorta != "PORTA") throw 1;
-
-        for (int i = 0; i < Np; i++)
+        if (!ArqCircuito.good() || titulo != "CIRCUITO" || stPorta != "PORTAS") throw 1;
+          
+        for (int i = 0; i < N_P; i++)
         {
             int index;
-            std::string prnts, portTipo;
+            std::string portTipo;
+            char prnts;
             ArqCircuito >> index >> prnts >> portTipo;
 
-            if (!ArqCircuito.good() || index != i + 1 || prnts != ")" || validType(portTipo)) throw 2;
+            if (!ArqCircuito.good() || index != i + 1 || prnts != ')' || !validType(portTipo)) throw 2;
 
             Port *P = allocPort(portTipo);
             if ((*P).ler(ArqCircuito) && validPort((*P).getId_in(index)));
@@ -367,18 +369,27 @@ bool Circuito::ler(const std::string& arq)
 
         if (!ArqCircuito.good() || saidas != "SAIDAS") throw 3;
 
-        for (int i = 0; i < Nout; i++)
+        for (int i = 0; i < N_Out; i++)
         {
-            int index;
-            std::string prnts;
-            ArqCircuito >> index >> prnts;
+            int index, idOut;
+            char prnts;
+            ArqCircuito >> index >> prnts >> idOut;
 
-            if (!ArqCircuito.good() || index != i + 1 || prnts != ")" || validIdOrig(index)) throw 4;
+            std::cout << "_" << prnts << "_" << std::endl;
+
+            // if (!ArqCircuito.good() || (index != i + 1) || (prnts != ")") || (!validIdOrig(index))) throw 4;
+
+            if (!ArqCircuito.good()) throw 4;
+            else if (index != i+1) throw 5;
+            else if (prnts != ')') throw 6;
+            else if (!validIdOrig(index)) throw 7;
         }
     }
 
     catch (int erro)
     {
+        std::cout << "erro " << erro << std::endl;
+        
         ArqCircuito.close();
         return false;
     }
