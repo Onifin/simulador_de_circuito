@@ -45,7 +45,7 @@ ptr_Port allocPort(std::string& Tipo)
 ///
 
 /// ***********************
-/// Inicializacao e finalizacao 
+/// Inicializacao e finalizacao
 /// ***********************
 
 Circuito::Circuito():
@@ -369,6 +369,7 @@ bool Circuito::simular(const std::vector<bool3S>& in_circ)
 {
     // VARIÁVEIS LOCAIS:
     bool tudo_def, alguma_def;
+    int id;
     std::vector<bool3S> in_port;
 
     // SIMULAÇÃO DAS PORTAS
@@ -376,6 +377,56 @@ bool Circuito::simular(const std::vector<bool3S>& in_circ)
     for(int i = 0; i <= getNumPorts()-1; i++)
     {
         (*ports[i]).setOutput(bool3S::UNDEF);
+    }
+
+    do
+    {
+        tudo_def = true;
+        alguma_def = false;
+
+        for(int i = 0; i <= getNumPorts()-1; i++)
+        {
+            if((*ports[i]).getOutput() == bool3S::UNDEF)
+            {
+                in_port.resize((*ports[i]).getNumInputs());
+                for(int j = 0; (*ports[i]).getNumInputs()-1; j++)
+                {
+
+                    id = (*ports[i]).getId_in(j);
+
+                    if(id>0)
+                    {
+                        in_port[j] = (*ports[id-1]).getOutput();
+                    }else
+                    {
+                        in_port[j] = in_circ[-id-1];
+                    }
+                }
+
+                (*ports[i]).simular(in_port);
+
+                if((*ports[id-1]).getOutput() == bool3S::UNDEF)
+                {
+                    tudo_def = false;
+                }else
+                {
+                    alguma_def = true;
+                }
+            }
+        }
+    }while(!tudo_def && alguma_def);
+
+    for(int j = 0; j <= getNumOutputs()-1; j++)
+    {
+        id = id_out[j];
+
+        if(id>0)
+        {
+             out_circ[j] = (*ports[id-1]).getOutput();
+        }else
+        {
+            out_circ[j] = in_circ[-id-1];
+        }
     }
 }
 
