@@ -63,7 +63,13 @@ Circuito::Circuito(const Circuito& C):
     ports = C.ports;
 }
 
-Circuito::~Circuito(){
+Circuito::Circuito(Circuito&& C)
+{
+
+}
+
+Circuito::~Circuito()
+{
     clear();
 }
 
@@ -75,6 +81,17 @@ void Circuito::clear()
     for (int i = 0; i < ports.size(); i++) delete ports[i];
     ports.clear();
 }
+
+void Circuito::operator=(const Circuito& C)
+{
+    // falta fazer
+}
+
+void Circuito::operator=(Circuito&& C)
+{
+    // falta fazer
+}
+
 
 void Circuito::resize(int NI, int NO, int NP)
 {
@@ -234,7 +251,22 @@ int Circuito::getId_inPort(int IdPort, int I) const
 /// Funcoes de modificacao
 /// ***********************
 
-//falta_fazer();
+  void Circuito::setIdOutput(int IdOut, int IdOrig)
+  {
+    // fazer falta
+    
+  }
+
+  void Circuito::setPort(int IdPort, std::string Tipo, int NIn)
+  {
+    if (validIdPort(IdPort) && validType(Tipo)) //falta fazer teste NIn
+    {
+        delete ports[IdPort -1];
+        ports[IdPort -1] = allocPort(Tipo);
+        (*ports[IdPort -1]).setNumInputs(NIn);
+    }
+  }
+
 
 /// ***********************
 /// E/S de dados
@@ -353,9 +385,37 @@ bool Circuito::ler(const std::string& arq)
     return true;
 }
 
+std::ostream& Circuito::imprimir(std::ostream& O=std::cout) const
+{
+    O << "CIRCUITO " << getNumInputs() << " " << getNumOutputs() << " " << getNumPorts() << std::endl;
+    O << "PORTAS" << std::endl;
+    for (int i = 0; i< ports.size(); i++)
+    {
+        O << (*ports[i]).getId_in(i) << ")" << (*ports[i]) << std::endl;
+    }
+    O << "SAIDAS" << std::endl;
+    for (int k; k < getNumOutputs(); k++)
+    {
+        O << getIdOutput(k) << ") " <<  (*ports[k]).getOutput();
+    }
+    return O;
+}
 
+  bool Circuito::salvar(const std::string& arq) const
+  {
+    if(!valid) return false;
+    std::ofstream Of(arq);
+    Of.open(arq);
+    if (!Of.good())
+    {
+        Of.close();
+        return false;
+    }
+    imprimir(Of);
+    Of.close();
+    return true;
+  }
 
-//falta_fazer();
 
 /// ***********************
 /// SIMULACAO (funcao principal do circuito)
@@ -379,4 +439,10 @@ bool Circuito::simular(const std::vector<bool3S>& in_circ)
     }
 }
 
-//falta_fazer();
+
+
+std::ostream& operator<<(std::ostream& O, const Circuito& C)
+{
+    C.imprimir(O);
+    return O;
+}
