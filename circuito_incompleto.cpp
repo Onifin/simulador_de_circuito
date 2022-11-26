@@ -209,57 +209,53 @@ int Circuito::getId_inPort(int IdPort, int I) const
 
 bool Circuito::ler(const std::string& arq)
 {
-  try
-  {
     std::ifstream ArqCircuito;
-    std::string titulo, stPorta;
-    int Nin, Nout, Np;
-    ArqCircuito >> titulo;
-    ArqCircuito >> Nin >> Nout >> Np;
-    ArqCircuito >> stPorta;
-
-    if (!ArqCircuito.good() || titulo != "CIRCUITO" || stPorta != "PORTA") throw 1;
-
-    for (int i = 0; i < Np; i++)
+    ArqCircuito.open(arq);
+    try
     {
-        int index;
-        std::string prnts, portTipo;
-        ArqCircuito >> index >> prnts >> portTipo;
+        std::string titulo, stPorta;
+        int Nin, Nout, Np;
+        ArqCircuito >> titulo;
+        ArqCircuito >> Nin >> Nout >> Np;
+        ArqCircuito >> stPorta;
 
-        if (index != i + 1 || prnts != ")" || validType(portTipo))
+        if (!ArqCircuito.good() || titulo != "CIRCUITO" || stPorta != "PORTA") throw 1;
+
+        for (int i = 0; i < Np; i++)
         {
-            ArqCircuito.close();
-            throw 2;
+            int index;
+            std::string prnts, portTipo;
+            ArqCircuito >> index >> prnts >> portTipo;
+
+            if (!ArqCircuito.good() || index != i + 1 || prnts != ")" || validType(portTipo)) throw 2;
+
+            Port *P = allocPort(portTipo);
+            if ((*P).ler(ArqCircuito) && validPort((*P).getId_in(index)));
         }
 
-        Port *P = allocPort(portTipo);
-        if ((*P).ler(ArqCircuito) && validPort((*P).getId_in(index)));
-    }
+        std::string saidas;
+        ArqCircuito >> saidas;
 
-    std::string saidas;
-    ArqCircuito >> saidas;
+        if (!ArqCircuito.good() || saidas != "SAIDAS") throw 3;
 
-    if (!ArqCircuito.good() || saidas != "SAIDAS") throw 3;
-
-    for (int i = 0; i < Nout; i++)
-    {
-        int index;
-        std::string prnts;
-        ArqCircuito >> index >> prnts;
-
-        if (index != i + 1 || prnts != ")" || validIdOrig(index))
+        for (int i = 0; i < Nout; i++)
         {
-            ArqCircuito.close();
-            throw 4;
+            int index;
+            std::string prnts;
+            ArqCircuito >> index >> prnts;
+
+            if (!ArqCircuito.good() || index != i + 1 || prnts != ")" || validIdOrig(index)) throw 4;
         }
     }
-  }
-  
-  catch (int erro)
-  {
-    return false;
-  }
-  return true;
+
+    catch (int erro)
+    {
+        ArqCircuito.close();
+        return false;
+    }
+
+    ArqCircuito.close();
+    return true;
 }
 
 
