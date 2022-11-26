@@ -154,20 +154,15 @@ void Circuito::digitar()
         }
         while(!validType(tipo));
 
-
-    // Em seguida, o usuario digita as ids de todas as saidas, que sao conferidas (validIdOrig).
-    // Se o usuario digitar um dado invalido, o metodo deve pedir que ele digite novamente
-    // Deve utilizar o metodo digitar da classe Port
-
     }
 
     for(int i = 0; i < Nout; i++)
     {
         do
         {
+            std::cout << "  Digite o id de saida da porta " << i+1 << std::endl;
             std::cin >> id_out[i];
         }while(validIdOrig(id_out[i]));
-
     }
 
 }
