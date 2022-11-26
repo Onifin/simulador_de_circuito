@@ -387,7 +387,8 @@ bool Circuito::ler(const std::string& arq)
     return true;
 }
 
-std::ostream& Circuito::imprimir(std::ostream& O=std::cout) const
+// std::ostream& Circuito::imprimir(std::ostream& O=std::cout) const //corrigir
+std::ostream& Circuito::imprimir(std::ostream& O) const
 {
     O << "CIRCUITO " << getNumInputs() << " " << getNumOutputs() << " " << getNumPorts() << std::endl;
     O << "PORTAS" << std::endl;
@@ -405,7 +406,7 @@ std::ostream& Circuito::imprimir(std::ostream& O=std::cout) const
 
  bool Circuito::salvar(const std::string& arq) const
   {
-    if(!valid) return false;
+    if(!valid()) return false;
     std::ofstream Of(arq);
     Of.open(arq);
     if (!Of.good())
@@ -485,6 +486,7 @@ bool Circuito::simular(const std::vector<bool3S>& in_circ)
             out_circ[j] = in_circ[-id-1];
         }
     }
+    return true;
 }
 
 
