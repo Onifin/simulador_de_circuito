@@ -238,3 +238,21 @@ bool Circuito::valid() const
     }
     return true;
 }
+
+///     *#*#*#*#*#*#*#*#*#
+///     #SIMULAR CIRCUITO*
+///     *#*#*#*#*#*#*#*#*#
+
+bool Circuito::simular(const std::vector<bool3S>& in_circ)
+{
+    // VARIÁVEIS LOCAIS:
+    bool tudo_def, alguma_def;
+    std::vector<bool3S> in_port;
+
+    // SIMULAÇÃO DAS PORTAS
+
+    for(int i = 0; i <= getNumPorts()-1; i++)
+    {
+        (*ports[i]).out_port.setOutput(bool3S::UNDEF);
+    }
+}
