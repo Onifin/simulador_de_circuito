@@ -6,10 +6,11 @@
 1667919132 c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\bool3s.h
 	<iostream>
 
-1669333603 source:c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\circuito-main.cpp
+1669446517 source:c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\circuito-main.cpp
 	<iostream>
 	<string>
 	"circuito.h"
+	"port.h"
 
 1669349032 c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\circuito.h
 	<iostream>
@@ -24,11 +25,11 @@
 	<vector>
 	"bool3S.h"
 
-1669330433 source:c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\port_incompleto.cpp
+1669446492 source:c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\port_incompleto.cpp
 	<fstream>
 	"port.h"
 
-1669314838 source:c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\circuito_incompleto.cpp
+1669434228 source:c:\users\iann9\onedrive\documentos\atividades pa\circuito_logica\circuito_incompleto.cpp
 	<fstream>
 	<utility>
 	"circuito.h"

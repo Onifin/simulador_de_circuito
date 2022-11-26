@@ -1,7 +1,7 @@
 #include <fstream>
 #include <utility> // para std::swap
 #include "circuito.h"
-
+/*
 ///
 /// As strings que definem os tipos de porta
 ///
@@ -172,17 +172,20 @@ void Circuito::digitar()
 /// ***********************
 
 // Retorna true se IdInput eh uma id de entrada do circuito valida (entre -1 e -NInput)
+/*
 bool Circuito::validIdInput(int IdInput) const
 {
     return (IdInput<=-1 && IdInput>=-getNumInputs());
 }
-
+*/
 // Retorna true se IdOutput eh uma id de saida do circuito valida (entre 1 e NOutput)
+/*
 bool Circuito::validIdOutput(int IdOutput) const
 {
     return (IdOutput>=1 && IdOutput<=getNumOutputs());
 }
-
+*/
+/*
 // Retorna true se IdPort eh uma id de porta do circuito valida (entre 1 e NPort)
 bool Circuito::validIdPort(int IdPort) const
 {
@@ -242,7 +245,7 @@ bool Circuito::valid() const
 ///     *#*#*#*#*#*#*#*#*#
 ///     #SIMULAR CIRCUITO*
 ///     *#*#*#*#*#*#*#*#*#
-
+/*
 bool Circuito::simular(const std::vector<bool3S>& in_circ)
 {
     // VARIÁVEIS LOCAIS:
@@ -256,3 +259,4 @@ bool Circuito::simular(const std::vector<bool3S>& in_circ)
         (*ports[i]).out_port.setOutput(bool3S::UNDEF);
     }
 }
+*/
