@@ -55,18 +55,21 @@ Circuito::Circuito():
 }
 
 Circuito::Circuito(const Circuito& C):
-    // Nin(), id_out(nullptr), out_circ(nullptr), ports(nullptr)
     Nin(), id_out(), out_circ(), ports()
 {
     Nin = C.getNumInputs();
     id_out = C.id_out;
     out_circ = C.out_circ;
+    for(int i = 0; i  < getNumPorts(); i++)
+    {
+        ports[i] = nullptr;
+    }
     ports = C.ports;
 }
 
 Circuito::Circuito(Circuito&& C)
 {
-
+  
 }
 
 Circuito::~Circuito()
@@ -85,12 +88,15 @@ void Circuito::clear()
 
 void Circuito::operator=(const Circuito& C)
 {
-    // falta fazer
+    Nin = C.getNumInputs();
+    id_out = C.id_out;
+    out_circ = C.out_circ;
+    ports = C.ports;
 }
 
 void Circuito::operator=(Circuito&& C)
 {
-    // falta fazer
+    
 }
 
 
@@ -147,7 +153,7 @@ bool Circuito::validIdPort(int IdPort) const
 // validIdOrig == validIdInput OR validIdPort
 bool Circuito::validIdOrig(int IdOrig) const
 {
-    std::cout << IdOrig << std::endl;
+    // std::cout << IdOrig << std::endl; //corrigir
   return validIdInput(-IdOrig) || validIdPort(IdOrig);
 }
 
@@ -346,7 +352,6 @@ bool Circuito::ler(const std::string& arq)
         int N_In, N_Out, N_P;
         ArqCircuito >> titulo >> N_In >> N_Out >> N_P >> stPorta;
         Circuito Prov;
-        if(valid)
         Prov.resize(N_In, N_Out, N_P);
 
         if (!ArqCircuito.good() || titulo != "CIRCUITO" || stPorta != "PORTAS") throw 1;
@@ -360,9 +365,15 @@ bool Circuito::ler(const std::string& arq)
 
             if (!ArqCircuito.good() || index != i + 1 || prnts != ')' || !validType(portTipo)) throw 2;
 
-            Port *P = allocPort(portTipo);
-            if ((*P).ler(ArqCircuito) && validPort((*P).getId_in(index)));
+            Prov.ports[i] = allocPort(portTipo);
+
+            if (!(Prov.ports[i]->ler(ArqCircuito)) || !(validPort(Prov.ports[i]->getId_in(index))))
+            {
+              // Prov.setPort(P->getId_in(i),P->getName(), P->getNumInputs());
+              throw 9;
+            }
         }
+
 
         std::string saidas;
         ArqCircuito >> saidas;
@@ -375,15 +386,17 @@ bool Circuito::ler(const std::string& arq)
             char prnts;
             ArqCircuito >> index >> prnts >> idOut;
 
-            std::cout << "_" << prnts << "_" << std::endl;
-
-            // if (!ArqCircuito.good() || (index != i + 1) || (prnts != ")") || (!validIdOrig(index))) throw 4;
-
+            // if (!ArqCircuito.good() || (index != i + 1) || (prnts != ')') || (!validIdOrig(index))) throw 4;
             if (!ArqCircuito.good()) throw 4;
-            else if (index != i+1) throw 5;
+            else if (index != i + 1) throw 5;
             else if (prnts != ')') throw 6;
-            else if (!validIdOrig(index)) throw 7;
+            else if (!Prov.validIdOrig(index)) throw 7;
+
+            // Prov.setIdOutput(i, idOut);
+            Prov.id_out[i] = idOut;
         }
+        Prov.imprimir();
+        if (Prov.valid()) *this = Prov;
     }
 
     catch (int erro)
@@ -398,7 +411,6 @@ bool Circuito::ler(const std::string& arq)
     return true;
 }
 
-// std::ostream& Circuito::imprimir(std::ostream& O=std::cout) const //corrigir
 std::ostream& Circuito::imprimir(std::ostream& O) const
 {
     O << "CIRCUITO " << getNumInputs() << " " << getNumOutputs() << " " << getNumPorts() << std::endl;

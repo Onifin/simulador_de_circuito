@@ -1,3 +1,6 @@
+// Bruno Bezerra
+// Ian Fonseca
+
 #include <iostream>
 #include <string>
 #include "circuito.h"
