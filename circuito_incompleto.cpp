@@ -61,6 +61,10 @@ Circuito::Circuito(const Circuito& C):
     Nin = C.getNumInputs();
     id_out = C.id_out;
     out_circ = C.out_circ;
+    for(int i = 0; i  < getNumPorts(); i++)
+    {
+        ports[i] = nullptr;
+    }
     ports = C.ports;
 }
 
@@ -85,7 +89,10 @@ void Circuito::clear()
 
 void Circuito::operator=(const Circuito& C)
 {
-    // falta fazer
+    Nin = C.getNumInputs();
+    id_out = C.id_out;
+    out_circ = C.out_circ;
+    ports = C.ports;
 }
 
 void Circuito::operator=(Circuito&& C)
@@ -167,6 +174,7 @@ bool Circuito::validPort(int IdPort) const
   if (!definedPort(IdPort)) return false;
   for (int j=0; j<getNumInputsPort(IdPort); j++)
   {
+
     if (!validIdOrig(getId_inPort(IdPort,j))) return false;
   }
   return true;
@@ -257,7 +265,7 @@ int Circuito::getId_inPort(int IdPort, int I) const
   void Circuito::setIdOutput(int IdOut, int IdOrig)
   {
     // fazer falta
-    
+
   }
 
   void Circuito::setPort(int IdPort, std::string Tipo, int NIn)
@@ -274,6 +282,16 @@ int Circuito::getId_inPort(int IdPort, int I) const
 /// E/S de dados
 /// ***********************
 
+  // Entrada dos dados de um circuito via teclado
+  // O usuario digita o numero de entradas, saidas e portas
+  // apos o que, se os valores estiverem corretos (>0), redimensiona o circuito
+  // Em seguida, para cada porta o usuario digita o tipo (NT,AN,NA,OR,NO,XO,NX) que eh conferido
+  // Apos criada dinamicamente (new) a porta do tipo correto, chama a
+  // funcao digitar na porta recem-criada. A porta digitada eh conferida (validPort).
+  // Em seguida, o usuario digita as ids de todas as saidas, que sao conferidas (validIdOrig).
+  // Se o usuario digitar um dado invalido, o metodo deve pedir que ele digite novamente
+  // Deve utilizar o metodo digitar da classe Port
+
 void Circuito::digitar()
 {
     int Nin;
@@ -281,26 +299,27 @@ void Circuito::digitar()
     int Nports;
 
     std::string tipo;
+
     do
     {
-        std::cout << "  Numero de entradas da porta: ";
+        std::cout << "Numero de entradas do circuito: ";
         std::cin >> Nin;
     }
-    while(Nin < 0);
+    while(Nin <= 0);
 
     do
     {
-        std::cout << "  Numero de saidas da porta: ";
+        std::cout << "Numero de saidas do circuito: ";
         std::cin >> Nout;
     }
-    while(Nout < 0);
+    while(Nout <= 0);
 
     do
     {
-        std::cout << "  Numero de portas: ";
+        std::cout << "Numero de portas do circuito: ";
         std::cin >> Nports;
     }
-    while(Nports < 0);
+    while(Nports <= 0);
 
     resize(Nin, Nout, Nports);
 
@@ -308,30 +327,29 @@ void Circuito::digitar()
     {
         do
         {
-            std::cout << "  Digite o tipo da porta " << i+1 << std::endl;
+            std::cout << "Digite o tipo da porta " << i+1 << ": ";
             std::cin >> tipo;
 
             if(validType(tipo))
             {
                 ports[i] = allocPort(tipo);
-            }
-            do
-            {
-                (*ports[i]).digitar();
-            }while(validPort(i+1));
 
+                do
+                {
+                  (ports[i])->digitar();
+                }while(validPort(i+1));
+            }
         }
         while(!validType(tipo));
-
     }
 
     for(int i = 0; i < Nout; i++)
     {
         do
         {
-            std::cout << "  Digite o id de saida da porta " << i+1 << std::endl;
+            std::cout << "  Digite o id de saida da porta " << i+1 << ": ";
             std::cin >> id_out[i];
-        }while(validIdOrig(id_out[i]));
+        }while(!validIdOrig(id_out[i]));
     }
 
 }
@@ -346,11 +364,11 @@ bool Circuito::ler(const std::string& arq)
         int N_In, N_Out, N_P;
         ArqCircuito >> titulo >> N_In >> N_Out >> N_P >> stPorta;
         Circuito Prov;
-        if(valid)
+
         Prov.resize(N_In, N_Out, N_P);
 
         if (!ArqCircuito.good() || titulo != "CIRCUITO" || stPorta != "PORTAS") throw 1;
-          
+
         for (int i = 0; i < N_P; i++)
         {
             int index;
@@ -389,7 +407,7 @@ bool Circuito::ler(const std::string& arq)
     catch (int erro)
     {
         std::cout << "erro " << erro << std::endl;
-        
+
         ArqCircuito.close();
         return false;
     }
@@ -408,7 +426,7 @@ std::ostream& Circuito::imprimir(std::ostream& O) const
         O << (*ports[i]).getId_in(i) << ")" << (*ports[i]) << std::endl;
     }
     O << "SAIDAS" << std::endl;
-    for (int k; k < getNumOutputs(); k++)
+    for (int k = 0; k < getNumOutputs(); k++)
     {
         O << getIdOutput(k) << ") " <<  (*ports[k]).getOutput();
     }
@@ -455,10 +473,12 @@ bool Circuito::simular(const std::vector<bool3S>& in_circ)
 
         for(int i = 0; i <= getNumPorts()-1; i++)
         {
+
             if((*ports[i]).getOutput() == bool3S::UNDEF)
             {
                 in_port.resize((*ports[i]).getNumInputs());
-                for(int j = 0; (*ports[i]).getNumInputs()-1; j++)
+
+                for(int j = 0; j <= (*ports[i]).getNumInputs()-1; j++)
                 {
 
                     id = (*ports[i]).getId_in(j);
@@ -471,27 +491,31 @@ bool Circuito::simular(const std::vector<bool3S>& in_circ)
                         in_port[j] = in_circ[-id-1];
                     }
                 }
-
+                std::cout << "SOCORRO3";
                 (*ports[i]).simular(in_port);
-
+                std::cout << toChar((*ports[i]).getOutput());
                 if((*ports[id-1]).getOutput() == bool3S::UNDEF)
                 {
+                    std::cout << "SOCORRO5";
                     tudo_def = false;
                 }else
                 {
                     alguma_def = true;
                 }
             }
+
         }
     }while(!tudo_def && alguma_def);
 
     for(int j = 0; j <= getNumOutputs()-1; j++)
     {
+
         id = id_out[j];
 
         if(id>0)
         {
              out_circ[j] = (*ports[id-1]).getOutput();
+
         }else
         {
             out_circ[j] = in_circ[-id-1];

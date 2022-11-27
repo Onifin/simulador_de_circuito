@@ -263,11 +263,13 @@ void Port_NOT::digitar()
 
     do
     {
-        std::cout << "Digite o ID da entrada da porta: " << std::endl;
+        std::cout << "Digite o ID de entrada da porta: ";
         std::cin >> id;
+
     }while(id == 0);
 
     setId_in(0, id);
+
 }
 
 ///OK
